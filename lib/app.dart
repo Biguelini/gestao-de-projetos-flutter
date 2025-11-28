@@ -1,4 +1,5 @@
 import 'package:gestao_projetos/presentation/pages/projects/project_detail_page.dart';
+import 'package:gestao_projetos/presentation/pages/tasks/task_board_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'presentation/pages/auth/login_page.dart';
@@ -64,6 +65,14 @@ class App {
             ),
           ),
           GoRoute(
+            path: '/app/settings',
+            name: 'settings',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SettingsPage(),
+            ),
+          ),
+          GoRoute(
             path: '/app/projects/new',
             name: 'project_new',
             pageBuilder: (context, state) => NoTransitionPage(
@@ -90,6 +99,19 @@ class App {
               return NoTransitionPage(
                 key: state.pageKey,
                 child: ProjectDetailPage(projectId: id),
+              );
+            },
+          ),
+
+          GoRoute(
+            path: '/app/projects/:id/board',
+            name: 'project_board',
+            pageBuilder: (context, state) {
+              final idStr = state.pathParameters['id']!;
+              final id = int.parse(idStr);
+              return NoTransitionPage(
+                key: state.pageKey,
+                child: TaskBoardPage(projectId: id),
               );
             },
           ),

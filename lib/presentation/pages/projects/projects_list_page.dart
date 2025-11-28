@@ -165,12 +165,24 @@ class _ProjectTile extends StatelessWidget {
       },
       title: Text(project.name),
       subtitle: Text('${project.client} • ${_formatDate(project.createdAt)}'),
-      trailing: Chip(
-        label: Text(
-          ProjectStatus.label(project.status),
-          style: const TextStyle(fontSize: 12),
-        ),
-        backgroundColor: _statusColor(project.status, colorScheme),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            tooltip: 'Ver board',
+            icon: const Icon(Icons.view_kanban_outlined),
+            onPressed: () {
+              router.go('/app/projects/${project.id}/board');
+            },
+          ),
+          Chip(
+            label: Text(
+              ProjectStatus.label(project.status),
+              style: const TextStyle(fontSize: 12),
+            ),
+            backgroundColor: _statusColor(project.status, colorScheme),
+          ),
+        ],
       ),
     );
   }
