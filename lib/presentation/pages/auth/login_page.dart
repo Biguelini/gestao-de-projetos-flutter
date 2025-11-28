@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    router.go('/app/projects');
+    router.go('/app/projects?refresh=true');
   }
 
   @override

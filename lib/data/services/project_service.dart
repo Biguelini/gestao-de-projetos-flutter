@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import '../models/project_model.dart';
 
 class PagedResult<T> {
@@ -23,6 +22,12 @@ class ProjectService {
     _seedFakeData();
   }
 
+  int _generateNextId() {
+    if (_allProjects.isEmpty) return 1;
+    final maxId = _allProjects.map((p) => p.id).reduce(max);
+    return maxId + 1;
+  }
+
   void _seedFakeData() {
     if (_allProjects.isNotEmpty) return;
 
@@ -35,22 +40,22 @@ class ProjectService {
       'Loja do Zé',
     ];
 
-    for (int i = 1; i <= 57; i++) {
-      final statusIndex = random.nextInt(3);
+    for (int i = 0; i < 20; i++) {
+      final statusIndex = random.nextInt(ProjectStatus.all.length);
       final status = ProjectStatus.all[statusIndex];
       final client = clients[random.nextInt(clients.length)];
 
-      _allProjects.add(
-        ProjectModel(
-          id: i,
-          name: 'Projeto #$i',
-          client: client,
-          status: status,
-          createdAt: DateTime.now().subtract(
-            Duration(days: random.nextInt(120)),
-          ),
-        ),
+      final id = _generateNextId();
+
+      final project = ProjectModel(
+        id: id,
+        name: 'Projeto #$id',
+        client: client,
+        status: status,
+        createdAt: DateTime.now().subtract(Duration(days: random.nextInt(120))),
       );
+
+      _allProjects.add(project);
     }
   }
 
@@ -60,7 +65,7 @@ class ProjectService {
     String? search,
     String? status,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     Iterable<ProjectModel> filtered = _allProjects;
 
@@ -91,5 +96,67 @@ class ProjectService {
       page: page,
       pageSize: pageSize,
     );
+  }
+
+  Future<ProjectModel> getById(int id) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    final project = _allProjects.firstWhere(
+      (p) => p.id == id,
+      orElse: () => throw Exception('Projeto não encontrado'),
+    );
+    return project;
+  }
+
+  Future<ProjectModel> createProject({
+    required String name,
+    required String client,
+    required String status,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final id = _generateNextId();
+
+    final project = ProjectModel(
+      id: id,
+      name: name,
+      client: client,
+      status: status,
+      createdAt: DateTime.now(),
+    );
+
+    _allProjects.add(project);
+    return project;
+  }
+
+  Future<ProjectModel> updateProject({
+    required int id,
+    required String name,
+    required String client,
+    required String status,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final index = _allProjects.indexWhere((p) => p.id == id);
+    if (index == -1) {
+      throw Exception('Projeto não encontrado');
+    }
+
+    final existing = _allProjects[index];
+
+    final updated = ProjectModel(
+      id: existing.id,
+      name: name,
+      client: client,
+      status: status,
+      createdAt: existing.createdAt,
+    );
+
+    _allProjects[index] = updated;
+    return updated;
+  }
+
+  Future<void> deleteProject(int id) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    _allProjects.removeWhere((p) => p.id == id);
   }
 }

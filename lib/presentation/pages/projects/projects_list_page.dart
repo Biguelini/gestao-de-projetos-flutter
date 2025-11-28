@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/models/project_model.dart';
@@ -44,6 +45,7 @@ class _FiltersBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ProjectListViewModel>();
+    final router = GoRouter.of(context);
 
     return Row(
       children: [
@@ -58,11 +60,10 @@ class _FiltersBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-
         Expanded(
           flex: 2,
           child: DropdownButtonFormField<String?>(
-            value: vm.statusFilter,
+            initialValue: vm.statusFilter,
             decoration: const InputDecoration(labelText: 'Status'),
             isExpanded: true,
             items: [
@@ -80,9 +81,7 @@ class _FiltersBar extends StatelessWidget {
             onChanged: vm.updateStatusFilter,
           ),
         ),
-
         const SizedBox(width: 12),
-
         IconButton(
           tooltip: 'Recarregar',
           onPressed: vm.isLoading ? null : () => vm.refresh(),
@@ -93,6 +92,14 @@ class _FiltersBar extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : Icon(Icons.refresh, color: colorScheme.primary),
+        ),
+        const SizedBox(width: 12),
+        FilledButton.icon(
+          onPressed: () {
+            router.go('/app/projects/new');
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Novo projeto'),
         ),
       ],
     );
@@ -133,7 +140,7 @@ class _ProjectList extends StatelessWidget {
 
     return ListView.separated(
       itemCount: projects.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final project = projects[index];
         return _ProjectTile(project: project);
@@ -150,13 +157,14 @@ class _ProjectTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final router = GoRouter.of(context);
 
     return ListTile(
+      onTap: () {
+        router.go('/app/projects/${project.id}');
+      },
       title: Text(project.name),
-      subtitle: Text(
-        '${project.client} • '
-        '${_formatDate(project.createdAt)}',
-      ),
+      subtitle: Text('${project.client} • ${_formatDate(project.createdAt)}'),
       trailing: Chip(
         label: Text(
           ProjectStatus.label(project.status),

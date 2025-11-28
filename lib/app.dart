@@ -1,3 +1,4 @@
+import 'package:gestao_projetos/presentation/pages/projects/project_detail_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'presentation/pages/auth/login_page.dart';
@@ -21,8 +22,6 @@ class App {
       final initialized = authState.isInitialized;
       final loggedIn = authState.isAuthenticated;
       final String loc = state.uri.path;
-
-      print('redirect → init=$initialized, loggedIn=$loggedIn, loc=$loc');
 
       if (!initialized) {
         return null;
@@ -65,12 +64,34 @@ class App {
             ),
           ),
           GoRoute(
-            path: '/app/settings',
-            name: 'settings',
+            path: '/app/projects/new',
+            name: 'project_new',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
-              child: const SettingsPage(),
+              child: const ProjectDetailPage(projectId: null),
             ),
+          ),
+          GoRoute(
+            path: '/app/projects/:id',
+            name: 'project_detail',
+            pageBuilder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              if (idStr == null) {
+                return NoTransitionPage(
+                  key: state.pageKey,
+                  child: const NotFoundPage(),
+                );
+              }
+
+              final id = int.parse(
+                idStr,
+              ); // se for "NaN" ou coisa bizarra → dá erro visível
+
+              return NoTransitionPage(
+                key: state.pageKey,
+                child: ProjectDetailPage(projectId: id),
+              );
+            },
           ),
         ],
       ),
