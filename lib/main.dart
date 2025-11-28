@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestao_projetos/core/theme/app_theme.dart';
+import 'package:gestao_projetos/data/services/project_service.dart';
 import 'package:provider/provider.dart';
 
 import 'url_strategy.dart';
@@ -17,6 +18,8 @@ void main() {
         ChangeNotifierProvider<AuthState>(
           create: (context) => AuthState(context.read<AuthService>()),
         ),
+
+        Provider<ProjectService>(create: (_) => ProjectService()),
       ],
       child: const MyApp(),
     ),
