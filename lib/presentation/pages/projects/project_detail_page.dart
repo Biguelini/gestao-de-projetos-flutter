@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/models/project_model.dart';
@@ -7,7 +8,7 @@ import '../../../data/services/project_service.dart';
 import '../../viewmodels/project_detail_viewmodel.dart';
 
 class ProjectDetailPage extends StatelessWidget {
-  final int? projectId; // null = criação
+  final int? projectId;
 
   const ProjectDetailPage({super.key, this.projectId});
 
@@ -62,7 +63,7 @@ class _ProjectAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(vm.isEditing ? 'Editar projeto' : 'Novo projeto'),
       automaticallyImplyLeading: false,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: const Icon(Symbols.arrow_back_2),
         onPressed: () {
           GoRouter.of(context).go('/app/projects');
         },

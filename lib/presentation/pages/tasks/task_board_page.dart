@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestao_projetos/core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/models/task_model.dart';
@@ -27,13 +29,13 @@ class _TaskBoardScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TaskBoardViewModel>();
-
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('Board do projeto #${vm.projectId}'),
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Symbols.arrow_back),
           onPressed: () {
             GoRouter.of(context).go('/app/projects');
           },
@@ -41,13 +43,7 @@ class _TaskBoardScaffold extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: vm.isLoading ? null : () => vm.loadTasks(),
-            icon: vm.isLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.refresh),
+            icon: const Icon(Symbols.refresh),
           ),
         ],
       ),
@@ -67,10 +63,12 @@ class _TaskBoardScaffold extends StatelessWidget {
               ),
             ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: cs.primary,
+        foregroundColor: cs.onPrimary,
         onPressed: () async {
           await _showTaskDialog(context);
         },
-        icon: const Icon(Icons.add),
+        icon: const Icon(Symbols.add),
         label: const Text('Nova tarefa'),
       ),
     );
@@ -95,22 +93,22 @@ class _TaskColumn extends StatelessWidget {
       case TaskStatus.todo:
         tasks = vm.todo;
         title = 'A Fazer';
-        headerColor = cs.primaryContainer;
+        headerColor = AppColors.purpleSoft;
         break;
       case TaskStatus.doing:
         tasks = vm.doing;
         title = 'Em Progresso';
-        headerColor = cs.secondaryContainer;
+        headerColor = AppColors.orange;
         break;
       case TaskStatus.done:
         tasks = vm.done;
         title = 'Concluído';
-        headerColor = Colors.green.shade200;
+        headerColor = AppColors.success;
         break;
       default:
         tasks = const [];
         title = status;
-        headerColor = cs.surfaceVariant;
+        headerColor = AppColors.purpleSoft;
     }
 
     return DragTarget<TaskModel>(
@@ -128,10 +126,16 @@ class _TaskColumn extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+                  horizontal: 16,
+                  vertical: 16,
                 ),
-                color: headerColor,
+                decoration: BoxDecoration(
+                  color: headerColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                ),
                 child: Text(
                   '$title (${tasks.length})',
                   style: Theme.of(context).textTheme.titleSmall,
@@ -209,7 +213,7 @@ class _DraggableTaskCard extends StatelessWidget {
           child: _TaskCardContent(
             task: task,
             isDraggingPreview: true,
-            onMoveStatus: null, // 👈 no preview, sem menu
+            onMoveStatus: null,
             onDelete: null,
           ),
         ),
@@ -250,6 +254,7 @@ class _TaskCardContent extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+
       child: InkWell(
         onTap: isDraggingPreview
             ? null
@@ -280,7 +285,10 @@ class _TaskCardContent extends StatelessWidget {
                   Chip(
                     label: Text(
                       TaskPriority.label(task.priority),
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.lightBg,
+                      ),
                     ),
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -334,12 +342,13 @@ class _TaskCardContent extends StatelessWidget {
   Color _priorityColor(String priority, ColorScheme cs) {
     switch (priority) {
       case TaskPriority.high:
-        return Colors.red.shade200;
+        return AppColors.danger;
       case TaskPriority.medium:
-        return Colors.orange.shade200;
+        return AppColors.orange;
       case TaskPriority.low:
+        return AppColors.success;
       default:
-        return cs.surfaceVariant;
+        return AppColors.danger;
     }
   }
 }
@@ -361,62 +370,65 @@ Future<void> _showTaskDialog(BuildContext context, {TaskModel? task}) async {
     builder: (context) {
       return AlertDialog(
         title: Text(task == null ? 'Nova tarefa' : 'Editar tarefa'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Título'),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Descrição'),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: assigneeController,
-                decoration: const InputDecoration(labelText: 'Responsável'),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: status,
-                items: TaskStatus.all
-                    .map(
-                      (s) => DropdownMenuItem(
-                        value: s,
-                        child: Text(TaskStatus.label(s)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    status = value;
-                  }
-                },
-                decoration: const InputDecoration(labelText: 'Status'),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: priority,
-                items: TaskPriority.all
-                    .map(
-                      (p) => DropdownMenuItem(
-                        value: p,
-                        child: Text(TaskPriority.label(p)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    priority = value;
-                  }
-                },
-                decoration: const InputDecoration(labelText: 'Prioridade'),
-              ),
-            ],
+        content: SizedBox(
+          width: 480,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Título'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Descrição'),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: assigneeController,
+                  decoration: const InputDecoration(labelText: 'Responsável'),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: status,
+                  items: TaskStatus.all
+                      .map(
+                        (s) => DropdownMenuItem(
+                          value: s,
+                          child: Text(TaskStatus.label(s)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      status = value;
+                    }
+                  },
+                  decoration: const InputDecoration(labelText: 'Status'),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: priority,
+                  items: TaskPriority.all
+                      .map(
+                        (p) => DropdownMenuItem(
+                          value: p,
+                          child: Text(TaskPriority.label(p)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      priority = value;
+                    }
+                  },
+                  decoration: const InputDecoration(labelText: 'Prioridade'),
+                ),
+              ],
+            ),
           ),
         ),
         actions: [

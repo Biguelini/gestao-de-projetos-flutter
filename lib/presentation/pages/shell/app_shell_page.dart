@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import '../../widgets/app_sidebar.dart';
 
 class AppShellPage extends StatelessWidget {
@@ -9,6 +10,8 @@ class AppShellPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 900;
@@ -19,7 +22,17 @@ class AppShellPage extends StatelessWidget {
               children: [
                 const SizedBox(width: 260, child: AppSidebar()),
                 const VerticalDivider(width: 1),
-                Expanded(child: child),
+                Expanded(
+                  child: Container(
+                    color: cs.surface,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1200),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -50,11 +63,11 @@ class AppShellPage extends StatelessWidget {
               },
               destinations: const [
                 NavigationDestination(
-                  icon: Icon(Icons.view_kanban_outlined),
+                  icon: Icon(Symbols.view_kanban),
                   label: 'Projetos',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.settings_outlined),
+                  icon: Icon(Symbols.settings_rounded),
                   label: 'Configurações',
                 ),
               ],

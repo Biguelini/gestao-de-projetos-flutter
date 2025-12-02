@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../viewmodels/auth_state.dart';
@@ -27,8 +28,8 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final authState = context.read<AuthState>();
-    final messenger = ScaffoldMessenger.of(context); // 👈 captura antes
-    final router = GoRouter.of(context); // 👈 captura antes
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
 
     final email = _emailController.text.trim();
     final password = _passwordController.text;
@@ -65,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.dashboard_customize_outlined,
+                      Symbols.space_dashboard,
                       size: 48,
                       color: colorScheme.primary,
                     ),

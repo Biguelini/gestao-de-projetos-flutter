@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestao_projetos/core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/models/project_model.dart';
@@ -54,7 +56,7 @@ class _FiltersBar extends StatelessWidget {
           child: TextField(
             decoration: const InputDecoration(
               labelText: 'Buscar por nome ou cliente',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(Symbols.search),
             ),
             onChanged: vm.updateSearch,
           ),
@@ -85,20 +87,14 @@ class _FiltersBar extends StatelessWidget {
         IconButton(
           tooltip: 'Recarregar',
           onPressed: vm.isLoading ? null : () => vm.refresh(),
-          icon: vm.isLoading
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(Icons.refresh, color: colorScheme.primary),
+          icon: Icon(Symbols.refresh, color: colorScheme.primary),
         ),
         const SizedBox(width: 12),
         FilledButton.icon(
           onPressed: () {
             router.go('/app/projects/new');
           },
-          icon: const Icon(Icons.add),
+          icon: const Icon(Symbols.add),
           label: const Text('Novo projeto'),
         ),
       ],
@@ -170,7 +166,7 @@ class _ProjectTile extends StatelessWidget {
         children: [
           IconButton(
             tooltip: 'Ver board',
-            icon: const Icon(Icons.view_kanban_outlined),
+            icon: const Icon(Symbols.view_kanban),
             onPressed: () {
               router.go('/app/projects/${project.id}/board');
             },
@@ -178,7 +174,7 @@ class _ProjectTile extends StatelessWidget {
           Chip(
             label: Text(
               ProjectStatus.label(project.status),
-              style: const TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12, color: AppColors.lightBg),
             ),
             backgroundColor: _statusColor(project.status, colorScheme),
           ),
@@ -196,13 +192,13 @@ class _ProjectTile extends StatelessWidget {
   Color _statusColor(String status, ColorScheme cs) {
     switch (status) {
       case ProjectStatus.active:
-        return cs.primaryContainer;
+        return AppColors.purpleSoft;
       case ProjectStatus.completed:
-        return const Color.fromARGB(255, 30, 71, 28);
+        return AppColors.success;
       case ProjectStatus.archived:
-        return cs.surfaceContainerHighest;
+        return AppColors.orange;
       default:
-        return cs.surfaceContainerHighest;
+        return AppColors.purpleSoft;
     }
   }
 }
@@ -227,11 +223,11 @@ class _PaginationBar extends StatelessWidget {
             const SizedBox(width: 12),
             IconButton(
               onPressed: vm.hasPrevPage ? vm.goToPrevPage : null,
-              icon: const Icon(Icons.chevron_left),
+              icon: const Icon(Symbols.chevron_left),
             ),
             IconButton(
               onPressed: vm.hasNextPage ? vm.goToNextPage : null,
-              icon: const Icon(Icons.chevron_right),
+              icon: const Icon(Symbols.chevron_right),
             ),
           ],
         ),

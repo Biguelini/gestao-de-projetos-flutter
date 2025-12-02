@@ -94,7 +94,7 @@ class App {
 
               final id = int.parse(
                 idStr,
-              ); // se for "NaN" ou coisa bizarra → dá erro visível
+              );
 
               return NoTransitionPage(
                 key: state.pageKey,

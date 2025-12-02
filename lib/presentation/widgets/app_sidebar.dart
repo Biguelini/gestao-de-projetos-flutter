@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestao_projetos/presentation/viewmodels/auth_state.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class AppSidebar extends StatelessWidget {
@@ -17,28 +18,25 @@ class AppSidebar extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              leading: Icon(
-                Icons.dashboard_customize_outlined,
-                color: colorScheme.primary,
-              ),
+              leading: Icon(Symbols.dashboard_2, color: colorScheme.primary),
               title: const Text('Project Dashboard'),
             ),
             const Divider(),
             _SidebarItem(
-              icon: Icons.view_kanban_outlined,
+              icon: Symbols.view_kanban,
               label: 'Projetos',
               selected: location.startsWith('/app/projects'),
               onTap: () => context.go('/app/projects'),
             ),
             _SidebarItem(
-              icon: Icons.settings_outlined,
+              icon: Symbols.settings_rounded,
               label: 'Configurações',
               selected: location.startsWith('/app/settings'),
               onTap: () => context.go('/app/settings'),
             ),
             const Spacer(),
             _SidebarItem(
-              icon: Icons.logout_outlined,
+              icon: Symbols.logout_rounded,
               label: 'Sair',
               selected: false,
               onTap: () async {

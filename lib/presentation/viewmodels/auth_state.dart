@@ -12,7 +12,7 @@ class AuthState extends ChangeNotifier {
 
   bool _isAuthenticated = false;
   bool _isLoading = false;
-  bool _isInitialized = false; // 👈 importante
+  bool _isInitialized = false;
 
   String? _token;
   String? _userName;

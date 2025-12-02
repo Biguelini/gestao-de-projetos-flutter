@@ -5,7 +5,7 @@ import '../../data/services/project_service.dart';
 
 class ProjectDetailViewModel extends ChangeNotifier {
   final ProjectService _service;
-  final int? projectId; // null = criação
+  final int? projectId;
 
   ProjectDetailViewModel(this._service, {this.projectId}) {
     if (projectId != null) {
